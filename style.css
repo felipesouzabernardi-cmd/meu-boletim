@@ -229,3 +229,86 @@ tr:hover {
     height: 420px;
   }
 }
+
+/* ===== Botão de Alterar Dados ===== */
+
+.btn-alterar {
+  margin-top: 12px;
+  padding: 8px 20px;
+  background-color: #4c1d95;
+  color: #ffffff;
+  border: none;
+  border-radius: 12px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.btn-alterar:hover {
+  background-color: #6b21a8;
+}
+
+/* ===== Edição Inline na Tabela ===== */
+
+/* Célula editável */
+td.editavel {
+  cursor: pointer;
+  position: relative;
+  transition: background-color 0.15s ease;
+}
+
+td.editavel:hover {
+  background-color: #f3e8ff;
+}
+
+/* Destaque sutil na célula em edição */
+td.editavel.editando {
+  background-color: #faf5ff;
+  outline: 2px solid #7c3aed;
+  outline-offset: -2px;
+  cursor: text;
+}
+
+/* Input inline dentro da célula */
+td.editavel input.campo-inline {
+  width: 100%;
+  max-width: 70px;
+  padding: 4px 6px;
+  border: 1px solid #7c3aed;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-family: inherit;
+  text-align: center;
+  background-color: #ffffff;
+  color: #333333;
+  outline: none;
+}
+
+/* Célula com erro de validação */
+td.editavel.erro input.campo-inline {
+  border-color: #dc2626;
+  background-color: #fef2f2;
+}
+
+/* Indicador visual de célula editável */
+td.editavel::after {
+  content: "";
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background-color: #c4b5fd;
+  opacity: 0.6;
+}
+
+td.editavel.editando::after {
+  display: none;
+}
+
+/* Esconde o indicador da coluna de disciplina (não editável) */
+td.nao-editavel::after {
+  display: none;
+}

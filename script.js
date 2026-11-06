@@ -1,6 +1,7 @@
 // DADOS FICTÍCIOS BRUTOS - 9º Ano
 // Guarda a lista de 15 disciplinas em um Array de Objetos
-const dadosBoletim = [
+// (passou a ser "let" para permitir carregar do localStorage)
+let dadosBoletim = [
   { disciplina: "Língua Portuguesa", tri1: 78, tri2: "8,2", tri3: 8.6, faltas: [2, 2, 1] },
   { disciplina: "Matemática", tri1: 55, tri2: "5,4", tri3: null, faltas: [3, 2, 2] },
   { disciplina: "Ciências", tri1: 84, tri2: 7.9, tri3: "8,3", faltas: [1, 1, 1] },
@@ -161,6 +162,9 @@ function renderizarBoletim() {
     `de ${totalDisciplinas} disciplinas`;
   document.getElementById("disciplinas-atencao-texto").textContent =
     `de ${totalDisciplinas} disciplinas`;
+
+  // Aplica edição inline na tabela
+  aplicarEdicaoInline();
 
   // Atualiza os gráficos após a tela já ter sido montada
   atualizarGraficos();
@@ -403,5 +407,205 @@ function atualizarGraficos() {
   atualizarGraficoFaltas();
 }
 
-// Executa a função quando a página carrega
+// ===== ÁREA DE EDIÇÃO INLINE + LOCALSTORAGE =====
+
+const CHAVE_STORAGE = "boletim_9b_14";
+
+// Carrega dados salvos do localStorage (se existirem e forem válidos)
+function carregarDoStorage() {
+  try {
+    const salvo = localStorage.getItem(CHAVE_STORAGE);
+    if (!salvo) return;
+    const dados = JSON.parse(salvo);
+    if (Array.isArray(dados) && dados.length === dadosBoletim.length) {
+      // Mantém as disciplinas originais e aplica notas/faltas salvas
+      dadosBoletim = dadosBoletim.map((original, i) => ({
+        disciplina: original.disciplina,
+        tri1: dados[i].tri1,
+        tri2: dados[i].tri2,
+        tri3: dados[i].tri3,
+        faltas: Array.isArray(dados[i].faltas) ? dados[i].faltas.slice(0, 3) : [0, 0, 0]
+      }));
+    }
+  } catch (e) {
+    console.warn("Não foi possível carregar dados salvos:", e);
+  }
+}
+
+// Salva os dados atuais no localStorage
+function salvarNoStorage() {
+  try {
+    const copia = dadosBoletim.map((item) => ({
+      disciplina: item.disciplina,
+      tri1: item.tri1,
+      tri2: item.tri2,
+      tri3: item.tri3,
+      faltas: item.faltas.slice(0, 3)
+    }));
+    localStorage.setItem(CHAVE_STORAGE, JSON.stringify(copia));
+  } catch (e) {
+    console.warn("Não foi possível salvar:", e);
+  }
+}
+
+// Aplica edição inline: transforma células de notas e faltas em editáveis
+function aplicarEdicaoInline() {
+  const linhas = document.querySelectorAll("#corpo-tabela tr");
+
+  linhas.forEach((tr, indiceDisciplina) => {
+    const celulas = tr.querySelectorAll("td");
+    // Colunas: 0=Disciplina, 1=Tri1, 2=Tri2, 3=Tri3, 4=Média, 5=Faltas, 6=Situação
+
+    // Notas (1, 2, 3) — editáveis
+    [1, 2, 3].forEach((coluna) => {
+      prepararCelulaEditavel(celulas[coluna], indiceDisciplina, ["tri1", "tri2", "tri3"][coluna - 1], "nota");
+    });
+
+    // Faltas (5) — editáveis
+    prepararCelulaEditavel(celulas[5], indiceDisciplina, "faltas", "falta");
+  });
+}
+
+// Configura uma célula para ser editável
+function prepararCelulaEditavel(celula, indiceDisciplina, campo, tipo) {
+  if (!celula) return;
+  celula.classList.add("editavel");
+  celula.dataset.disciplina = indiceDisciplina;
+  celula.dataset.campo = campo;
+  celula.dataset.tipo = tipo;
+
+  celula.addEventListener("click", () => {
+    if (celula.classList.contains("editando")) return;
+    iniciarEdicao(celula);
+  });
+}
+
+// Entra em modo de edição na célula
+function iniciarEdicao(celula) {
+  const indiceDisciplina = parseInt(celula.dataset.disciplina, 10);
+  const campo = celula.dataset.campo;
+  const tipo = celula.dataset.tipo;
+  const item = dadosBoletim[indiceDisciplina];
+
+  // Valor atual para preencher o input
+  let valorAtual;
+  if (tipo === "nota") {
+    const normalizado = normalizarNota(item[campo]);
+    valorAtual = normalizado !== null ? normalizado.toString().replace(".", ",") : "";
+  } else {
+    // falta: soma dos 3 trimestres (edição do total vai para o 1º tri e zera os demais)
+    valorAtual = item.faltas.reduce((a, b) => a + b, 0);
+  }
+
+  const valorOriginalHTML = celula.innerHTML;
+  celula.classList.add("editando");
+  celula.innerHTML = `<input type="text" class="campo-inline" value="${valorAtual}" inputmode="${tipo === "nota" ? "decimal" : "numeric"}" />`;
+
+  const input = celula.querySelector("input");
+  input.focus();
+  input.select();
+
+  let finalizado = false;
+
+  function finalizar(salvar) {
+    if (finalizado) return;
+    finalizado = true;
+    celula.classList.remove("editando");
+    celula.classList.remove("erro");
+
+    if (!salvar) {
+      celula.innerHTML = valorOriginalHTML;
+      return;
+    }
+
+    const texto = input.value.trim();
+
+    if (tipo === "nota") {
+      // Vazio = sem nota
+      if (texto === "") {
+        item[campo] = null;
+        salvarNoStorage();
+        renderizarBoletim();
+        return;
+      }
+      const num = Number(texto.replace(",", "."));
+      if (isNaN(num) || num < 0 || num > 10) {
+        // Inválido — restaura sem alterar
+        celula.classList.add("erro");
+        setTimeout(() => {
+          celula.classList.remove("erro");
+          celula.innerHTML = valorOriginalHTML;
+        }, 600);
+        return;
+      }
+      item[campo] = num;
+      salvarNoStorage();
+      renderizarBoletim();
+      return;
+    }
+
+    // falta
+    if (texto === "") {
+      celula.classList.add("erro");
+      setTimeout(() => {
+        celula.classList.remove("erro");
+        celula.innerHTML = valorOriginalHTML;
+      }, 600);
+      return;
+    }
+    const num = Number(texto);
+    if (!Number.isInteger(num) || num < 0) {
+      celula.classList.add("erro");
+      setTimeout(() => {
+        celula.classList.remove("erro");
+        celula.innerHTML = valorOriginalHTML;
+      }, 600);
+      return;
+    }
+    // O total digitado vai para o 1º trimestre; 2º e 3º ficam zerados
+    item.faltas = [num, 0, 0];
+    salvarNoStorage();
+    renderizarBoletim();
+  }
+
+  input.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      finalizar(true);
+    } else if (e.key === "Escape") {
+      e.preventDefault();
+      finalizar(false);
+    }
+  });
+
+  input.addEventListener("blur", () => {
+    // Ao sair do campo, salva o valor digitado
+    finalizar(true);
+  });
+}
+
+// Botão "Alterar dados" — limpa edições e volta aos dados originais
+function configurarBotaoAlterar() {
+  const botao = document.getElementById("btn-alterar");
+  if (!botao) return;
+  botao.addEventListener("click", () => {
+    const confirmar = confirm(
+      "Isso vai apagar todas as alterações salvas e voltar aos dados originais. Continuar?"
+    );
+    if (!confirmar) return;
+    localStorage.removeItem(CHAVE_STORAGE);
+    // Recarrega a página para restaurar o estado inicial
+    location.reload();
+  });
+}
+
+// ===== INICIALIZAÇÃO =====
+
+// Carrega dados do localStorage (se houver) antes de renderizar
+carregarDoStorage();
+
+// Executa a renderização quando a página carrega
 renderizarBoletim();
+
+// Configura o botão de alterar
+configurarBotaoAlterar();
