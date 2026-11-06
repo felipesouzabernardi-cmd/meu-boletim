@@ -1,41 +1,27 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Boletim Digital - 9º Ano</title>
-  <link rel="stylesheet" href="style.css">
-</head>
-<body>
-  <!-- Container principal do site -->
-  <div class="container">
-    
-    <!-- Cabeçalho com título e subtítulo -->
-    <header class="cabecalho">
-      <h1>Boletim Digital</h1>
-      <p class="subtitulo">9º Ano — Estudante Exemplo</p>
-    </header>
-
     <!-- Área de cards de resumo -->
     <section class="cards-resumo">
       <div class="card">
         <h3>Média Geral</h3>
         <p id="media-geral" class="valor">—</p>
+        <span id="media-geral-texto" class="subtexto">—</span>
       </div>
 
       <div class="card">
         <h3>Total de Faltas</h3>
         <p id="total-faltas" class="valor">—</p>
+        <span id="total-faltas-texto" class="subtexto">—</span>
       </div>
 
       <div class="card">
         <h3>Bom Desempenho</h3>
         <p id="disciplinas-bom" class="valor">—</p>
+        <span id="disciplinas-bom-texto" class="subtexto">—</span>
       </div>
 
       <div class="card">
         <h3>Precisam de Atenção</h3>
         <p id="disciplinas-atencao" class="valor">—</p>
+        <span id="disciplinas-atencao-texto" class="subtexto">—</span>
       </div>
 
       <div class="card">
@@ -44,30 +30,3 @@
         <span class="subtexto">Frequência adequada</span>
       </div>
     </section>
-
-    <!-- Tabela responsiva de disciplinas -->
-    <section class="tabela-container">
-      <table>
-        <thead>
-          <tr>
-            <th>Disciplina</th>
-            <th>1º Tri</th>
-            <th>2º Tri</th>
-            <th>3º Tri</th>
-            <th>Média</th>
-            <th>Faltas</th>
-            <th>Situação</th>
-          </tr>
-        </thead>
-        <tbody id="corpo-tabela">
-          <!-- As 15 disciplinas serão inseridas aqui automaticamente pelo JavaScript -->
-        </tbody>
-      </table>
-    </section>
-
-  </div>
-
-  <!-- Vincula o arquivo de script JavaScript -->
-  <script src="script.js"></script>
-</body>
-</html>

@@ -135,3 +135,33 @@ function renderizarBoletim() {
 
 // Executa a função quando a página carrega
 renderizarBoletim();
+  document.getElementById("media-geral").textContent = mediaGeralCalculada;
+  document.getElementById("total-faltas").textContent = totalFaltasGeral;
+  document.getElementById("disciplinas-bom").textContent = qtdBomDesempenho;
+  document.getElementById("disciplinas-atencao").textContent = qtdAtencao;  // --- NOVO: textos de situação dos cards ---
+
+  // Situação textual da média geral (mínimo 6,0)
+  const mediaNum = parseFloat(mediaGeralCalculada.replace(",", "."));
+  let textoMedia = "—";
+  if (!isNaN(mediaNum)) {
+    textoMedia = mediaNum >= 6.0 ? "Acima da média mínima" : "Abaixo da média mínima";
+  }
+  document.getElementById("media-geral-texto").textContent = textoMedia;
+
+  // Situação textual das faltas (referência: 30 faltas no total)
+  let textoFaltas = "—";
+  if (totalFaltasGeral === 0) {
+    textoFaltas = "Nenhuma falta registrada";
+  } else if (totalFaltasGeral <= 30) {
+    textoFaltas = "Faltas dentro do esperado";
+  } else {
+    textoFaltas = "Faltas acima do esperado";
+  }
+  document.getElementById("total-faltas-texto").textContent = textoFaltas;
+
+  // Quantidade relativa de disciplinas
+  const totalDisciplinas = dadosBoletim.length;
+  document.getElementById("disciplinas-bom-texto").textContent =
+    `de ${totalDisciplinas} disciplinas`;
+  document.getElementById("disciplinas-atencao-texto").textContent =
+    `de ${totalDisciplinas} disciplinas`;
