@@ -12,7 +12,7 @@ const dadosBoletim = [
   { disciplina: "Educação Digital", tri1: 91, tri2: 8.9, tri3: "9,4", faltas: [1, 1, 0] },
   { disciplina: "Educação Financeira", tri1: 76, tri2: "7,2", tri3: null, faltas: [1, 1, 1] },
   { disciplina: "Rec. Aprend. Matemática", tri1: 58, tri2: "5,9", tri3: 6.2, faltas: [2, 2, 1] },
-  { disciplina: "Leitura Rec. Aprend. Lingua Portuguesa", tri1: 72, tri2: "7,6", tri3: null, faltas: [2, 1, 1] },
+  { disciplina: "Leitura Rec. Aprend. Língua Portuguesa", tri1: 72, tri2: "7,6", tri3: null, faltas: [2, 1, 1] },
   { disciplina: "Pensamento Lógico", tri1: 49, tri2: 5.5, tri3: "5,8", faltas: [2, 2, 2] },
   { disciplina: "Literatura Arte e Movimento", tri1: "8,0", tri2: 84, tri3: null, faltas: [1, 1, 0] },
   { disciplina: "Práticas Experimentais", tri1: 64, tri2: "6,6", tri3: 7.0, faltas: [1, 1, 1] }
@@ -74,7 +74,7 @@ function renderizarBoletim() {
 
     // Calcula a média ignorando notas ausentes (null)
     const notasValidas = [n1, n2, n3].filter((n) => n !== null);
-    
+
     let mediaFinal = null;
     let textoMedia = "—";
     let situacao = "Nota ainda não disponível";
@@ -125,28 +125,24 @@ function renderizarBoletim() {
   });
 
   // Atualiza os Cards de Resumo no topo da página
-  const mediaGeralCalculada = totalMediasValidas > 0 ? (somaMediasGerais / totalMediasValidas).toFixed(1).replace(".", ",") : "—";
-  
+  const mediaGeralCalculada = totalMediasValidas > 0
+    ? (somaMediasGerais / totalMediasValidas).toFixed(1).replace(".", ",")
+    : "—";
+
   document.getElementById("media-geral").textContent = mediaGeralCalculada;
   document.getElementById("total-faltas").textContent = totalFaltasGeral;
   document.getElementById("disciplinas-bom").textContent = qtdBomDesempenho;
   document.getElementById("disciplinas-atencao").textContent = qtdAtencao;
-}
 
-// Executa a função quando a página carrega
-renderizarBoletim();
-  document.getElementById("media-geral").textContent = mediaGeralCalculada;
-  document.getElementById("total-faltas").textContent = totalFaltasGeral;
-  document.getElementById("disciplinas-bom").textContent = qtdBomDesempenho;
-  document.getElementById("disciplinas-atencao").textContent = qtdAtencao;  // --- NOVO: textos de situação dos cards ---
+  // --- Textos de situação dos cards ---
 
   // Situação textual da média geral (mínimo 6,0)
   const mediaNum = parseFloat(mediaGeralCalculada.replace(",", "."));
-  let textoMedia = "—";
+  let textoMediaGeral = "—";
   if (!isNaN(mediaNum)) {
-    textoMedia = mediaNum >= 6.0 ? "Acima da média mínima" : "Abaixo da média mínima";
+    textoMediaGeral = mediaNum >= 6.0 ? "Acima da média mínima" : "Abaixo da média mínima";
   }
-  document.getElementById("media-geral-texto").textContent = textoMedia;
+  document.getElementById("media-geral-texto").textContent = textoMediaGeral;
 
   // Situação textual das faltas (referência: 30 faltas no total)
   let textoFaltas = "—";
@@ -165,3 +161,7 @@ renderizarBoletim();
     `de ${totalDisciplinas} disciplinas`;
   document.getElementById("disciplinas-atencao-texto").textContent =
     `de ${totalDisciplinas} disciplinas`;
+}
+
+// Executa a função quando a página carrega
+renderizarBoletim();
