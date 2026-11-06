@@ -1,0 +1,143 @@
+/* Reseta margens e define a fonte padrão */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f8f7fc; /* Fundo levemente arroxeado, bem claro */
+  color: #333333;
+  padding: 20px;
+}
+
+/* Container centralizado */
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+/* Cabeçalho */
+.cabecalho {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.cabecalho h1 {
+  color: #4c1d95; /* Roxo principal */
+  font-size: 2.2rem;
+  margin-bottom: 5px;
+}
+
+.cabecalho .subtitulo {
+  color: #6b21a8; /* Roxo secundário */
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+/* Área dos Cards de Resumo */
+.cards-resumo {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-bottom: 30px;
+}
+
+/* Card individual (estilo arredondado com fundo suave e sem sombra) */
+.card {
+  flex: 1 1 calc(20% - 15px);
+  min-width: 160px;
+  background-color: #f3e8ff; /* Tom de roxo muito suave */
+  border: 1px solid #e9d5ff; /* Borda bem sutil */
+  border-radius: 16px; /* Cantos bem arredondados */
+  padding: 18px 15px;
+  text-align: center;
+}
+
+.card h3 {
+  font-size: 0.85rem;
+  color: #581c87;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 8px;
+}
+
+.card .valor {
+  font-size: 1.8rem;
+  font-weight: bold;
+  color: #3b82f6; /* Azul claro / destaque */
+}
+
+.card .subtexto {
+  display: block;
+  font-size: 0.75rem;
+  color: #64748b;
+  margin-top: 4px;
+}
+
+/* Tabela Responsiva */
+.tabela-container {
+  width: 100%;
+  overflow-x: auto; /* Permite rolar pro lado no celular */
+  background-color: #ffffff;
+  border-radius: 12px;
+  border: 1px solid #e9d5ff;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+th, td {
+  padding: 12px 15px;
+  border-bottom: 1px solid #f3e8ff;
+}
+
+th {
+  background-color: #4c1d95; /* Cabeçalho da tabela em roxo */
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+tr:hover {
+  background-color: #faf5ff; /* Destaque suave ao passar o mouse */
+}
+
+/* Badges (etiquetas) para a coluna de Situação */
+.badge {
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  display: inline-block;
+}
+
+.badge-bom {
+  background-color: #e0f2fe; /* Fundo azul claro */
+  color: #0369a1;
+}
+
+.badge-atencao {
+  background-color: #fef3c7; /* Fundo amarelado/alerta */
+  color: #b45309;
+}
+
+.badge-indisponivel {
+  background-color: #f1f5f9; /* Fundo cinza neutro */
+  color: #64748b;
+}
+
+/* Ajustes para telas pequenas (Celulares) */
+@media (max-width: 600px) {
+  .cabecalho h1 {
+    font-size: 1.7rem;
+  }
+  
+  .card {
+    flex: 1 1 100%; /* Em celulares, cada card ocupa a linha toda */
+  }
+}
